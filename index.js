@@ -63,6 +63,8 @@ fs.createReadStream('netflix-rotten-tomatoes-metacritic-imdb-depurado.csv')
       row['IMDb Score'] = 'Excelent';
     }
 
+    row['Release Date'] = difDate(row['Release Date'], row['Netflix Release Date']);
+
     if(row['Genre'] !== undefined){
       /*row['Genre'].split(',').forEach(function(genre){
         genre = genre.trim();
@@ -81,6 +83,36 @@ fs.createReadStream('netflix-rotten-tomatoes-metacritic-imdb-depurado.csv')
     });
     console.log('CSV file successfully readed');
     return line.join(';');
+  }
+
+  function difDate(date1,date2){
+    if(date1 !== undefined && date2 !== undefined ){
+      var day1 = new Date(date1); 
+      var day2 = new Date(date2);
+      //console.log('day1: ' + difference);
+      var difference= Math.abs(day2-day1);
+      //console.log('difference antes del fixed: ' + difference);
+      years = difference/(1000 * 3600 * 24) / 365;
+      //console.log('years antes del fixed: ' + years);
+      years = years.toFixed(2);
+      //console.log('date1: ' + date1 + ' date2: ' + date2 + ' Dif: ' + years);
+      //
+      
+      if (isNaN(years)){
+        return years;
+      }else {
+        //return years
+        if (years > 0 && years <= 40){ return Math.round(years)}
+        //else if (years > 10 && years <= 20){ return 20} 
+        //else if (years > 20 && years <= 30){ return 30} 
+        //else if (years > 30 && years <= 40){ return 40} 
+        else { return 40} 
+      }
+    }
+    else{
+      return NaN;
+    }
+
   }
 
   function writeFinal(){
