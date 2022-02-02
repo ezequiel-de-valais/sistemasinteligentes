@@ -7,8 +7,14 @@ let ITERATIONS = 100000;
 let i = 0;
 let GENRECOLUMNS = 'Crime;Drama;Fantasy;Horror;Romance;Comedy;Thriller;Animation;Short;Family;Mystery;Action;Adventure;Sci-Fi;Music;Biography;Sport;History;War;Documentary;Film-Noir;Musical;Game-Show;Western;Reality-TV;Talk-Show;News;Adult';
 let HEADERS = GENRECOLUMNS + ';Title;Genre;Languages;Series or Movie;Country Availability;Runtime;Actors;View Rating;Rotten Tomatoes Score;Metacritic Score;Awards Received;Awards Nominated For;Boxoffice;Release Date;Netflix Release Date;IMDb Votes;IMDb Score';
-let genres = {};
 let accumulatedData = HEADERS + os.EOL;
+let G='G,TV-G,U,TV-Y,E,TV-Y7-FV,TV-Y7,GP,Approved,Passed,AL'.split(',');
+let GP='TV-PG,PG,E10+,TV-13,PG-13,TV-14,M/PG'.split(',');
+let M='R,MA-17,NC-17,X,TV-MA,M'.split(',');
+let NR='NOT RATED,Unrated,Not Rated,'.split(',');
+
+
+
 HEADERS = HEADERS.split(';')
 fs.createReadStream('netflix-rotten-tomatoes-metacritic-imdb-depurado.csv')
   .pipe(csv({separator: ';'}))
@@ -61,6 +67,19 @@ fs.createReadStream('netflix-rotten-tomatoes-metacritic-imdb-depurado.csv')
       row['IMDb Score'] = 'Good';
     }else if(7.0 <= row['IMDb Score'] &&   row['IMDb Score'] <= 10){
       row['IMDb Score'] = 'Excelent';
+    }
+
+    if(G.includes(row['View Rating'])){
+      row['View Rating'] = 'G';
+    }else if(GP.includes(row['View Rating'])){
+      row['View Rating'] = 'GP';
+    }else if(M.includes(row['View Rating'])){
+      row['View Rating'] = 'M';
+    }else if(NR.includes(row['View Rating'])){
+      row['View Rating'] = 'NR';
+    }else{
+      console.log('error view rating "' + row['View Rating']+'"');
+      throw new Error("Something went badly wrong!");
     }
 
     row['Release Date'] = difDate(row['Release Date'], row['Netflix Release Date']);
