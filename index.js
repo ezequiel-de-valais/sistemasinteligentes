@@ -96,6 +96,13 @@ fs.createReadStream('netflix-rotten-tomatoes-metacritic-imdb-depurado.csv')
         row[aGenreColumn] = (rowgenres.includes(aGenreColumn))? '1':'0';
       });
     }
+    if(row['Boxoffice']) {
+      // console.log("Boxoffice:", row['Boxoffice'], row['Boxoffice'].replaceAll("$","").replaceAll(",",""))
+      row['Boxoffice'] = new Number(row['Boxoffice'].replaceAll("$","").replaceAll(",",""))
+    } else {
+      row['Boxoffice'] = Number.NaN
+    }
+
     console.log(row);
     HEADERS.forEach(function(header){
       line.push(row[header]);
