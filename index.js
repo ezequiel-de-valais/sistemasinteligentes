@@ -1,18 +1,20 @@
+const { default: cluster } = require('cluster');
 const csv = require('csv-parser');
 const fs = require('fs');
-var os = require("os");
+const os = require('os');
+const genre_cluster = require('./genres.js')
+
 
 //let ITERATIONS = 5;
 let ITERATIONS = 100000;
 let i = 0;
 let GENRECOLUMNS = 'Crime;Drama;Fantasy;Horror;Romance;Comedy;Thriller;Animation;Short;Family;Mystery;Action;Adventure;Sci-Fi;Music;Biography;Sport;History;War;Documentary;Film-Noir;Musical;Game-Show;Western;Reality-TV;Talk-Show;News;Adult';
-let HEADERS = GENRECOLUMNS + ';Title;Genre;Languages;Series or Movie;Country Availability;Runtime;Actors;View Rating;Rotten Tomatoes Score;Metacritic Score;Awards Received;Awards Nominated For;Boxoffice;Release Date;Netflix Release Date;IMDb Votes;IMDb Score';
+let HEADERS = GENRECOLUMNS + ';Title;Genre;GenreCluster;Languages;Series or Movie;Country Availability;Runtime;Actors;View Rating;Rotten Tomatoes Score;Metacritic Score;Awards Received;Awards Nominated For;Boxoffice;Release Date;Netflix Release Date;IMDb Votes;IMDb Score';
 let accumulatedData = HEADERS + os.EOL;
 let G='G,TV-G,U,TV-Y,E,TV-Y7-FV,TV-Y7,GP,Approved,Passed,AL'.split(',');
 let GP='TV-PG,PG,E10+,TV-13,PG-13,TV-14,M/PG'.split(',');
 let M='R,MA-17,NC-17,X,TV-MA,M'.split(',');
 let NR='NOT RATED,Unrated,Not Rated,'.split(',');
-
 
 
 HEADERS = HEADERS.split(';')
@@ -84,6 +86,7 @@ fs.createReadStream('netflix-rotten-tomatoes-metacritic-imdb-depurado.csv')
 
     row['Release Date'] = difDate(row['Release Date'], row['Netflix Release Date']);
 
+    row['GenreCluster'] = genre_cluster(row['Genre'])
     if(row['Genre'] !== undefined){
       /*row['Genre'].split(',').forEach(function(genre){
         genre = genre.trim();
