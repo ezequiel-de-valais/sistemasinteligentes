@@ -5,11 +5,10 @@ const os = require('os');
 const genre_cluster = require('./genres.js')
 
 
-//let ITERATIONS = 5;
 let ITERATIONS = 100000;
 let i = 0;
 let GENRECOLUMNS = 'Crime;Drama;Fantasy;Horror;Romance;Comedy;Thriller;Animation;Short;Family;Mystery;Action;Adventure;Sci-Fi;Music;Biography;Sport;History;War;Documentary;Film-Noir;Musical;Game-Show;Western;Reality-TV;Talk-Show;News;Adult';
-let HEADERS = GENRECOLUMNS + ';Title;Genre;GenreCluster;Languages;Series or Movie;Country Availability;Runtime;Actors;View Rating;Rotten Tomatoes Score;Metacritic Score;Awards Received;Awards Nominated For;Boxoffice;Release Date;Netflix Release Date;IMDb Votes;IMDb Score';
+let HEADERS = /*GENRECOLUMNS+';' + */'Title;GenreCluster;Languages;Series or Movie;Country Availability;Runtime;Actors;View Rating;Alternative Score;Awards Received;Awards Nominated For;Boxoffice;Release Year;Netflix Release Year;Difference Date;IMDb Votes;IMDb Score';
 let accumulatedData = HEADERS + os.EOL;
 let G='G,TV-G,U,TV-Y,E,TV-Y7-FV,TV-Y7,GP,Approved,Passed,AL'.split(',');
 let GP='TV-PG,PG,E10+,TV-13,PG-13,TV-14,M/PG'.split(',');
@@ -54,19 +53,22 @@ fs.createReadStream('netflix-rotten-tomatoes-metacritic-imdb-depurado.csv')
     } 
 
     console.log('rott score prom ' + row['Rotten Tomatoes Score']);
-
+    
     if(0 < row['Rotten Tomatoes Score'] && row['Rotten Tomatoes Score'] < 5){
       row['Rotten Tomatoes Score'] = 'Bad';
     }else if(5 <= row['Rotten Tomatoes Score'] && row['Rotten Tomatoes Score'] < 7.0){
       row['Rotten Tomatoes Score'] = 'Good';
     }else if(7.0 <= row['Rotten Tomatoes Score'] && row['Rotten Tomatoes Score'] <= 10){
       row['Rotten Tomatoes Score'] = 'Excelent';
+    }else if(0 == row['Rotten Tomatoes Score']){
+      row['Rotten Tomatoes Score'] = 'Unknown';
     }
-
+    row['Alternative Score'] = row['Rotten Tomatoes Score'];
+    
     if(0 <= row['IMDb Score'] && row['IMDb Score'] < 6){
       row['IMDb Score'] = 'Bad';
     }else if(6 <= row['IMDb Score'] &&   row['IMDb Score'] < 10){
-      row['IMDb Score'] = 'Excelent';
+      row['IMDb Score'] = 'Good';
     }
 
     if(G.includes(row['View Rating'])){
@@ -77,13 +79,12 @@ fs.createReadStream('netflix-rotten-tomatoes-metacritic-imdb-depurado.csv')
       row['View Rating'] = 'M';
     }else if(NR.includes(row['View Rating'])){
       row['View Rating'] = 'NR';
-    }else{
-      console.log('error view rating "' + row['View Rating']+'"');
-      throw new Error("Something went badly wrong!");
     }
 
-    row['Release Date'] = difDate(row['Release Date'], row['Netflix Release Date']);
+    row['Difference Date'] = difDate(row['Release Date'], row['Netflix Release Date']);
 
+    row['Release Year'] = new Date(row['Release Date']).getFullYear(); 
+    row['Netflix Release Year'] = new Date(row['Netflix Release Date']).getFullYear();;
     row['GenreCluster'] = genre_cluster(row['Genre'])
     if(row['Genre'] !== undefined){
       /*row['Genre'].split(',').forEach(function(genre){
@@ -98,8 +99,9 @@ fs.createReadStream('netflix-rotten-tomatoes-metacritic-imdb-depurado.csv')
       });
     }
     if(row['Boxoffice']) {
-      // console.log("Boxoffice:", row['Boxoffice'], row['Boxoffice'].replaceAll("$","").replaceAll(",",""))
-      row['Boxoffice'] = new Number(row['Boxoffice'].replaceAll("$","").replaceAll(",",""))
+      
+      //console.log("Boxoffice:", row['Boxoffice'], row['Boxoffice'].replace("$","").replace(/,/g,"").replace(" ",""));
+      row['Boxoffice'] = row['Boxoffice'].replace("$","").replace(/,/g,"").replace(" ","");
     } else {
       row['Boxoffice'] = Number.NaN
     }
@@ -128,12 +130,12 @@ fs.createReadStream('netflix-rotten-tomatoes-metacritic-imdb-depurado.csv')
       if (isNaN(years)){
         return years;
       }else {
-        //return years
-        if (years > 0 && years <= 40){ return Math.round(years)}
+        return years;
+        /*if (years > 0 && years <= 100){ return Math.round(years)}
         //else if (years > 10 && years <= 20){ return 20} 
         //else if (years > 20 && years <= 30){ return 30} 
         //else if (years > 30 && years <= 40){ return 40} 
-        else { return 40} 
+        else { return 100} */
       }
     }
     else{

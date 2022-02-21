@@ -31,6 +31,13 @@ const clusters = `Crime,0.2999,0.1027,0.2241,0.0219
     .map(([key, ...row]) => ({ [key]: row.map(Number.parseFloat) }))
     .reduce((acc, val) => ({ ...acc, ...val }))
 
+const genreNominal = {
+  0: 'A',
+  1: 'B',
+  2: 'C',
+  3: 'D'
+}
+
 const genre_cluster = (genres) => {
     const result = [0, 0, 0, 0]
     for (const genre of genres.split(",").map(x => x.trim())) {
@@ -42,7 +49,8 @@ const genre_cluster = (genres) => {
         }
     }
     const [max, cluster] = result.reduce(([max, i_max], val, i_val) => (val > max) ? [val, i_val] : [max, i_max], [0, NaN])
-    return cluster
+
+    return genreNominal[cluster]
 }
 /*
 test
