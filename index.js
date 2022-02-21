@@ -63,11 +63,9 @@ fs.createReadStream('netflix-rotten-tomatoes-metacritic-imdb-depurado.csv')
       row['Rotten Tomatoes Score'] = 'Excelent';
     }
 
-    if(0 <= row['IMDb Score'] && row['IMDb Score'] < 5){
+    if(0 <= row['IMDb Score'] && row['IMDb Score'] < 6){
       row['IMDb Score'] = 'Bad';
-    }else if(5 <= row['IMDb Score'] &&   row['IMDb Score'] < 7.0){
-      row['IMDb Score'] = 'Good';
-    }else if(7.0 <= row['IMDb Score'] &&   row['IMDb Score'] <= 10){
+    }else if(6 <= row['IMDb Score'] &&   row['IMDb Score'] < 10){
       row['IMDb Score'] = 'Excelent';
     }
 
