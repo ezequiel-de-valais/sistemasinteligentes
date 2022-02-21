@@ -8,7 +8,7 @@ const genre_cluster = require('./genres.js')
 let ITERATIONS = 100000;
 let i = 0;
 let GENRECOLUMNS = 'Crime;Drama;Fantasy;Horror;Romance;Comedy;Thriller;Animation;Short;Family;Mystery;Action;Adventure;Sci-Fi;Music;Biography;Sport;History;War;Documentary;Film-Noir;Musical;Game-Show;Western;Reality-TV;Talk-Show;News;Adult';
-let HEADERS = /*GENRECOLUMNS+';' + */'Title;GenreCluster;Languages;Series or Movie;Country Availability;Runtime;Actors;View Rating;Alternative Score;Awards Received;Awards Nominated For;Boxoffice;Release Year;Netflix Release Year;Difference Date;IMDb Votes;IMDb Score';
+let HEADERS = GENRECOLUMNS+';' + 'Title;GenreCluster;Languages;Series or Movie;Country Availability;Runtime;Actors;View Rating;Alternative Score;Awards Received;Awards Nominated For;Boxoffice;Release Year;Netflix Release Year;Difference Date;IMDb Votes;IMDb Score';
 let accumulatedData = HEADERS + os.EOL;
 let G='G,TV-G,U,TV-Y,E,TV-Y7-FV,TV-Y7,GP,Approved,Passed,AL'.split(',');
 let GP='TV-PG,PG,E10+,TV-13,PG-13,TV-14,M/PG'.split(',');
@@ -44,7 +44,7 @@ fs.createReadStream('netflix-rotten-tomatoes-metacritic-imdb-depurado.csv')
     row['Metacritic Score'] = new Number(row['Metacritic Score']) / 10;
     console.log('meta score ' +row['Metacritic Score']);
     row['IMDb Score'] = new Number(row['IMDb Score']);
-    console.log('imbsd score ' +row['IMDb Score']);
+    console.log('imbd score ' +row['IMDb Score']);
 
     if(row['Rotten Tomatoes Score'] > 0 && row['Metacritic Score'] > 0){
       row['Rotten Tomatoes Score'] = (row['Rotten Tomatoes Score'] + row['Metacritic Score']) / 2;
