@@ -5,11 +5,14 @@ const os = require('os');
 const genre_cluster = require('./genres.js')
 
 
+const OUTPUT_SEP = ',';
 let ITERATIONS = 100000;
 let i = 0;
 let GENRECOLUMNS = 'Crime;Drama;Fantasy;Horror;Romance;Comedy;Thriller;Animation;Short;Family;Mystery;Action;Adventure;Sci-Fi;Music;Biography;Sport;History;War;Documentary;Film-Noir;Musical;Game-Show;Western;Reality-TV;Talk-Show;News;Adult';
-let HEADERS = GENRECOLUMNS+';' + 'Title;GenreCluster;Languages;Series or Movie;Country Availability;Runtime;Actors;View Rating;Alternative Score;Awards Received;Awards Nominated For;Release Year;Netflix Release Year;Difference Date;IMDb Votes;IMDb Score';
-let accumulatedData = HEADERS + os.EOL;
+                                // Title;
+let HEADERS = GENRECOLUMNS+';' + 'GenreCluster;Languages;Series or Movie;Country Availability;Runtime;Actors;View Rating;Alternative Score;Awards Received;Awards Nominated For;Release Year;Netflix Release Year;Difference Date;IMDb Votes;IMDb Score';
+let accumulatedData = HEADERS.replaceAll(';',OUTPUT_SEP) + os.EOL;
+
 let G='G,TV-G,U,TV-Y,E,TV-Y7-FV,TV-Y7,GP,Approved,Passed,AL'.split(',');
 let GP='TV-PG,PG,E10+,TV-13,PG-13,TV-14,M/PG'.split(',');
 let M='R,MA-17,NC-17,X,TV-MA,M'.split(',');
@@ -181,7 +184,7 @@ fs.createReadStream('netflix-rotten-tomatoes-metacritic-imdb-depurado.csv')
       line.push(row[header]);
     });
     console.log('CSV file successfully readed');
-    return line.join(';');
+    return line.join(OUTPUT_SEP);
   }
 
   function difDate(date1,date2){
