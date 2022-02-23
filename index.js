@@ -8,7 +8,7 @@ const genre_cluster = require('./genres.js')
 let ITERATIONS = 100000;
 let i = 0;
 let GENRECOLUMNS = 'Crime;Drama;Fantasy;Horror;Romance;Comedy;Thriller;Animation;Short;Family;Mystery;Action;Adventure;Sci-Fi;Music;Biography;Sport;History;War;Documentary;Film-Noir;Musical;Game-Show;Western;Reality-TV;Talk-Show;News;Adult';
-let HEADERS = GENRECOLUMNS+';' + 'Title;GenreCluster;Languages;Series or Movie;Country Availability;Runtime;Actors;View Rating;Alternative Score;Awards Received;Awards Nominated For;Boxoffice;Release Year;Netflix Release Year;Difference Date;IMDb Votes;IMDb Score';
+let HEADERS = GENRECOLUMNS+';' + 'Title;GenreCluster;Languages;Series or Movie;Country Availability;Runtime;Actors;View Rating;Alternative Score;Awards Received;Awards Nominated For;Release Year;Netflix Release Year;Difference Date;IMDb Votes;IMDb Score';
 let accumulatedData = HEADERS + os.EOL;
 let G='G,TV-G,U,TV-Y,E,TV-Y7-FV,TV-Y7,GP,Approved,Passed,AL'.split(',');
 let GP='TV-PG,PG,E10+,TV-13,PG-13,TV-14,M/PG'.split(',');
@@ -54,22 +54,92 @@ fs.createReadStream('netflix-rotten-tomatoes-metacritic-imdb-depurado.csv')
 
     console.log('rott score prom ' + row['Rotten Tomatoes Score']);
     
-    if(0 < row['Rotten Tomatoes Score'] && row['Rotten Tomatoes Score'] < 5){
+    if(0 <= row['Rotten Tomatoes Score'] && row['Rotten Tomatoes Score'] < 5){
       row['Rotten Tomatoes Score'] = 'Bad';
     }else if(5 <= row['Rotten Tomatoes Score'] && row['Rotten Tomatoes Score'] < 7.0){
       row['Rotten Tomatoes Score'] = 'Good';
     }else if(7.0 <= row['Rotten Tomatoes Score'] && row['Rotten Tomatoes Score'] <= 10){
       row['Rotten Tomatoes Score'] = 'Excelent';
-    }else if(0 == row['Rotten Tomatoes Score']){
+    }else {
       row['Rotten Tomatoes Score'] = 'Unknown';
     }
     row['Alternative Score'] = row['Rotten Tomatoes Score'];
     
-    if(0 <= row['IMDb Score'] && row['IMDb Score'] < 6){
+    if(0 <= row['IMDb Score'] && row['IMDb Score'] < 7){
       row['IMDb Score'] = 'Bad';
-    }else if(6 <= row['IMDb Score'] &&   row['IMDb Score'] < 10){
+    }else if(7 <= row['IMDb Score'] &&   row['IMDb Score'] < 10){
       row['IMDb Score'] = 'Good';
     }
+    
+    if(!row['IMDb Votes'] || row['IMDb Votes'] <= 0){
+      row['IMDb Votes'] = '0';
+    }else if(row['IMDb Votes'] <= 10){
+      row['IMDb Votes'] = '10';
+    }else if(row['IMDb Votes'] <= 100){
+      row['IMDb Votes'] = '100';
+    }else if(row['IMDb Votes'] <= 10000){
+      row['IMDb Votes'] = '10000';
+    }else if(row['IMDb Votes'] <= 20000){
+      row['IMDb Votes'] = '20000';
+    }else{
+      row['IMDb Votes'] = '50000';
+    }
+
+    if(!row['Awards Received'] || row['Awards Received'] <= 0){
+      row['Awards Received'] = '0';
+    }else if(row['Awards Received'] < 2){
+      row['Awards Received'] = '1';
+    }else if(row['Awards Received'] <= 5){
+      row['Awards Received'] = '5';
+    }else if(row['Awards Received'] <= 10){
+      row['Awards Received'] = '10';
+    }else if(row['Awards Received'] <= 20){
+      row['Awards Received'] = '20';
+    }else{
+      row['Awards Received'] = '50';
+    }
+
+    if(!row['Awards Nominated For'] || row['Awards Nominated For'] <= 0){
+      row['Awards Nominated For'] = '0';
+    }else if(row['Awards Nominated For'] <= 1){
+      row['Awards Nominated For'] = '1';
+    }else if(row['Awards Nominated For'] <= 5){
+      row['Awards Nominated For'] = '5';
+    }else if(row['Awards Nominated For'] <= 10){
+      row['Awards Nominated For'] = '10';
+    }else if(row['Awards Nominated For'] <= 22){
+      row['Awards Nominated For'] = '22';
+    }else{
+      row['Awards Nominated For'] = '50';
+    }
+
+
+    if(!row['Languages'] || row['Languages'] <= 0){
+      row['Languages'] = '0';
+    }else if(row['Languages'] <= 1){
+      row['Languages'] = '1';
+    }else if(row['Languages'] <= 3){
+      row['Languages'] = '3';
+    }else if(row['Languages'] <= 5){
+      row['Languages'] = '5';
+    }else{
+      row['Languages'] = '10';
+    }
+
+    if(!row['Country Availability'] || row['Country Availability'] <= 0){
+      row['Country Availability'] = '0';
+    }else if(row['Country Availability'] <= 1){
+      row['Country Availability'] = '1';
+    }else if(row['Country Availability'] <= 5){
+      row['Country Availability'] = '5';
+    }else if(row['Country Availability'] <= 15){
+      row['Country Availability'] = '15';
+    }else if(row['Country Availability'] <= 35){
+      row['Country Availability'] = '35';
+    }else{
+      row['Country Availability'] = '36';
+    }
+
 
     if(G.includes(row['View Rating'])){
       row['View Rating'] = 'G';
