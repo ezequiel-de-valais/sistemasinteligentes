@@ -4,6 +4,18 @@ const fs = require('fs');
 const os = require('os');
 const genre_cluster = require('./genres.js')
 
+function discretize(val, ...args) {
+  if(!val) {
+    return args[0];
+  }
+  for (const v of args) {
+    if (val <= v) {
+      return v
+    }
+  }
+  return args.slice(-1)[0]
+}
+
 
 const OUTPUT_SEP = ',';
 let ITERATIONS = 100000;
@@ -74,19 +86,14 @@ fs.createReadStream('netflix-rotten-tomatoes-metacritic-imdb-depurado.csv')
       row['IMDb Score'] = 'Good';
     }
     
-    if(!row['IMDb Votes'] || row['IMDb Votes'] <= 0){
-      row['IMDb Votes'] = '0';
-    }else if(row['IMDb Votes'] <= 10){
-      row['IMDb Votes'] = '10';
-    }else if(row['IMDb Votes'] <= 100){
-      row['IMDb Votes'] = '100';
-    }else if(row['IMDb Votes'] <= 10000){
-      row['IMDb Votes'] = '10000';
-    }else if(row['IMDb Votes'] <= 20000){
-      row['IMDb Votes'] = '20000';
-    }else{
-      row['IMDb Votes'] = '50000';
-    }
+    row['IMDb Votes'] = discretize(row['IMDb Votes'],
+      0,
+      10,
+      100,
+      1_000,
+      10_000,
+      100_000) 
+
 
     if(!row['Awards Received'] || row['Awards Received'] <= 0){
       row['Awards Received'] = '0';
